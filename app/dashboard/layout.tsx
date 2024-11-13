@@ -1,5 +1,7 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
-import React from 'react';
+
+// ===> Only using in next@canery
+// export const experimental_ppr = true;
 
 const layout = ({ children }: { children: React.ReactNode }) => {
     return (
