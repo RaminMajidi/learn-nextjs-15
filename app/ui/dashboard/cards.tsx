@@ -4,7 +4,7 @@ import {
   UserGroupIcon,
   InboxIcon,
 } from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts/fonts';
+import { lusitana } from '@/app/ui/fonts/Index';
 
 const iconMap = {
   collected: BanknotesIcon,
