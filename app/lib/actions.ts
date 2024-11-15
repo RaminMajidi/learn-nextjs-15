@@ -4,6 +4,8 @@ import { CreateInvoiceValidation, UpdateInvoiceValidation } from './form-validat
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { InvoiceState } from '../types/Index';
+import { signIn } from '@/auth';
+import { AuthError } from 'next-auth';
 
 // *** Start invoice actions ***
 
@@ -93,3 +95,28 @@ export async function deleteInvoice(id: string) {
 };
 
 // *** End invoice actions ***
+
+
+// *** Satrt Auth actions ***
+
+// ===> autentication
+export async function authenticate(
+    prevState: string | undefined,
+    formData: FormData,
+) {
+    try {
+        await signIn('credentials', formData);
+    } catch (error) {
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid credentials.';
+                default:
+                    return 'Something went wrong.';
+            }
+        }
+        throw error;
+    }
+};
+
+// *** End Auth actions ***
