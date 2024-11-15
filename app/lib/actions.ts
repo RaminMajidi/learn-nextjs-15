@@ -104,9 +104,11 @@ export async function authenticate(
     prevState: string | undefined,
     formData: FormData,
 ) {
+    console.log("ACTION:===>");
     try {
-        await signIn('credentials', formData);
+        await signIn('credentials', formData)
     } catch (error) {
+        console.log("Error===>", error);
         if (error instanceof AuthError) {
             switch (error.type) {
                 case 'CredentialsSignin':
