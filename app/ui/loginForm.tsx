@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from './button';
-import { useActionState, useEffect } from 'react';
+import { useActionState } from 'react';
 import { loginAction } from '@/app/lib/actions';
 import ErrorBox from './custom/ErrorBox';
 import { LoginState } from '../types/Index';
@@ -15,10 +15,6 @@ export default function LoginForm() {
 
   const initialState: LoginState = { message: null, errors: {} };
   const [state, action, isPending] = useActionState(loginAction, initialState);
-
-  useEffect(() => {
-    console.log('STATE==>', state);
-  }, [state])
 
   return (
     <form action={action} className="space-y-3">

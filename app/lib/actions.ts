@@ -7,7 +7,6 @@ import { InvoiceState, LoginState } from '../types/Index';
 import { SignupSchema } from "@/app/lib/form-validation/Index"
 import { User } from './definitions';
 import bcrypt from 'bcrypt';
-import { error } from 'console';
 import { createSession, deleteSession } from './session';
 
 // *** Start invoice actions ***
@@ -109,6 +108,7 @@ export async function loginAction(prevState: LoginState, formData: FormData) {
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
+            message:"Missing Fields. Failed to Login."
         };
     }
 

@@ -5,7 +5,7 @@ export type InvoiceState = {
         status?: string[];
     };
     message?: string | null;
-};
+} ;
 
 export type LoginState = {
     errors?: {
