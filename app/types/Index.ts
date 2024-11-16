@@ -6,3 +6,17 @@ export type InvoiceState = {
     };
     message?: string | null;
 };
+
+export type LoginState = {
+    errors?: {
+        email?: string[];
+        password?: string[];
+    };
+    message?: string | null;
+};
+
+
+export type SessionPayload = {
+    userId: string;
+    expiresAt: Date;
+};

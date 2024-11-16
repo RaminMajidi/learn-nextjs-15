@@ -3,9 +3,12 @@ import { sql } from '@vercel/postgres';
 import { CreateInvoiceValidation, UpdateInvoiceValidation } from './form-validation/Index';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { InvoiceState } from '../types/Index';
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
+import { InvoiceState, LoginState } from '../types/Index';
+import { SignupSchema } from "@/app/lib/form-validation/Index"
+import { User } from './definitions';
+import bcrypt from 'bcrypt';
+import { error } from 'console';
+import { createSession, deleteSession } from './session';
 
 // *** Start invoice actions ***
 
@@ -99,26 +102,52 @@ export async function deleteInvoice(id: string) {
 
 // *** Satrt Auth actions ***
 
-// ===> autentication
-export async function authenticate(
-    prevState: string | undefined,
-    formData: FormData,
-) {
-    console.log("ACTION:===>");
+// ===> autentication(Login)
+export async function loginAction(prevState: LoginState, formData: FormData) {
+    const validatedFields = SignupSchema.safeParse(Object.fromEntries(formData));
+
+    if (!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+        };
+    }
+
+    const { email, password } = validatedFields.data;
+
+    let userId = null;
     try {
-        await signIn('credentials', formData)
-    } catch (error) {
-        console.log("Error===>", error);
-        if (error instanceof AuthError) {
-            switch (error.type) {
-                case 'CredentialsSignin':
-                    return 'Invalid credentials.';
-                default:
-                    return 'Something went wrong.';
+        const data = await sql<User>`SELECT * FROM users WHERE email=${email}`;
+        if (!data.rowCount) {
+            return {
+                errors: {
+                    email: ["Inavlid Your Email"]
+                }
+            }
+        } else {
+            const passwordMatch = await bcrypt.compare(password, data.rows[0].password);
+
+            if (!passwordMatch) {
+                return {
+                    errors: {
+                        password: ["Invalid Your Password"]
+                    }
+                }
+            } else {
+                userId = data.rows[0].id;
             }
         }
-        throw error;
+    } catch {
+        throw new Error('Failed to fetch user.');
     }
+
+    await createSession(userId);
+    redirect("/dashboard");
+
 };
 
+// ===> Logout
+export async function logout() {
+    await deleteSession();
+    redirect("/");
+}
 // *** End Auth actions ***
